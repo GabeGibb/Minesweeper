@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Gabe's Sweepin</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+      overflow: hidden;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+
+    }
+    #table{
+      padding: 0px;
+
+    }
+    button{
+      background: transparent;
+      display: inline-block;
+      padding:10px;
+
+    }
+    table{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+
+    }
+    tr{
+      padding: 0px;
+    }
+    td{
+      padding: 0px;
+    }
+    
+  </style>
+</head>
+
+<body>
+  <h1>Gabe's Sweeping</h1>
+  <div id="table">
+    <canvas id="canvas">
+      <p>Your browser doesn't support canvas. Boo hoo!</p>
+      <script src="minesweeper.js"></script>
+    </canvas>
+  </div>
+  
+</body>
+
+</html>
