@@ -1,6 +1,6 @@
 var ctx = document.getElementById("canvas").getContext("2d");
-let xSize = 7;
-let ySize = 7;
+let xSize = 10;
+let ySize = 10;
 let widthMult = ySize / xSize;
 ctx.canvas.height = window.innerHeight - 50;
 ctx.canvas.width = ctx.canvas.height * widthMult;
@@ -12,13 +12,12 @@ class Cell{
         this.flagged = false;
         this.revealed = false;
         let rand = Math.random();
-        if (rand <= 0.2){
+        if (rand <= 0.25){
             this.value = -1;
         }
         else{
             this.value = 0;
         }
-        
     }
 }
 
@@ -117,12 +116,12 @@ class Board{
     popEmpty(x, y){
         for (let i = -1; i < 2; i++){
             for (let j = -1; j < 2; j++){
-                if (this.cellArr?.[x+i] !== undefined && this.cellArr[x+i]?.[y+j] !== undefined 
+                if (this.cellExists(x+i, y+j)  
                     && this.cellArr[x+i][y+j].value == 0 && !this.cellArr[x+i][y+j].revealed){
                     this.revealCell(x+i, y+j);
                     this.popEmpty(x+i, y+j);
                 }
-                if (this.cellArr?.[x+i] !== undefined && this.cellArr[x+i]?.[y+j] !== undefined 
+                if (this.cellExists(x+i, y+j)
                     && this.cellArr[x+i][y+j].value > 0 && !this.cellArr[x+i][y+j].revealed){
                     this.revealCell(x+i, y+j);
                 }
@@ -130,7 +129,29 @@ class Board{
         }
     }
     
+    startGame(x, y){
+        this.clearStartBombs(x, y);
+        this.assignNums();
+        this.revealCell(x, y);
+    }
+
+    clearStartBombs(x, y){
+        for (let i = -1; i < 2; i++){
+            for (let j = -1; j < 2; j++){
+                if (this.cellExists(x+i, y+j) && this.cellArr[x+i][y+j].value == -1){
+                    this.cellArr[x+i][y+j].value = 0;
+                }
+            }
+        }
+        this.cellArr[x][y].value = 0;
+    }
+
+    cellExists(x, y){
+        return this.cellArr?.[x] !== undefined && this.cellArr[x]?.[y] !== undefined;
+    }
+
     assignNums(){
+        this.safeCells = 1;
         for(let i = 0; i < this.ySize; i++){
             for(let j = 0; j < this.xSize; j++){
                 if (this.cellArr[i][j].value != -1){
@@ -144,7 +165,7 @@ class Board{
     }
 
     createCells(){
-        this.safeCells = 0;
+        this.started = false;
         for(let i = 0; i < this.ySize; i++){
             this.cellArr[i] = new Array(this.xSize);
             for(let j = 0; j < this.xSize; j++){
@@ -180,6 +201,10 @@ class Board{
                         return;
                     }
                     if (event.button == 0 && !board.cellArr[i][j].flagged) {
+                        if (!board.started){
+                            board.started = true;
+                            board.startGame(i, j);
+                        }
                         board.revealCell(i, j);
                     }
                     if (event.button == 2) {
