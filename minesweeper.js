@@ -1,8 +1,8 @@
 var ctx = document.getElementById("canvas").getContext("2d");
-let xSize = 10;
-let ySize = 10;
-let widthMult = ySize / xSize;
-ctx.canvas.height = window.innerHeight - 50;
+let xSize = 20;
+let ySize = 12;
+let widthMult = xSize / ySize;
+ctx.canvas.height = window.innerHeight - 200;
 ctx.canvas.width = ctx.canvas.height * widthMult;
 
 
@@ -12,7 +12,7 @@ class Cell{
         this.flagged = false;
         this.revealed = false;
         let rand = Math.random();
-        if (rand <= 0.25){
+        if (rand <= 0.20){
             this.value = -1;
         }
         else{
@@ -43,21 +43,21 @@ class Board{
     emptyCell(x, y){
         ctx.beginPath();
         ctx.fillStyle = "white";
-        ctx.fillRect(x * ctx.canvas.width / (this.ySize), y*ctx.canvas.width/(this.ySize), 
-                ctx.canvas.width / (this.ySize), ctx.canvas.width / (this.ySize));
+        ctx.fillRect(x * ctx.canvas.width / (this.xSize), y*ctx.canvas.height/(this.ySize), 
+                ctx.canvas.width / (this.xSize), ctx.canvas.height / (this.ySize));
         ctx.stroke();
         ctx.beginPath();
         ctx.style = "black";
-        ctx.rect(x * ctx.canvas.width / (this.ySize), y*ctx.canvas.width/(this.ySize), 
-                ctx.canvas.width / (this.ySize), ctx.canvas.width / (this.ySize));
+        ctx.rect(x * ctx.canvas.width / (this.xSize), y*ctx.canvas.height/(this.ySize), 
+                ctx.canvas.width / (this.xSize), ctx.canvas.height / (this.ySize));
         ctx.stroke();
     }
 
     flagCell(x, y){
         ctx.beginPath();
         ctx.fillStyle = "green";
-        ctx.fillRect(x * ctx.canvas.width / (this.ySize), y*ctx.canvas.width/(this.ySize), 
-                ctx.canvas.width / (this.ySize), ctx.canvas.width / (this.ySize));
+        ctx.fillRect(x * ctx.canvas.width / (this.xSize), y*ctx.canvas.height/(this.ySize), 
+                ctx.canvas.width / (this.xSize), ctx.canvas.height / (this.ySize));
         ctx.stroke();
     }
 
@@ -65,7 +65,7 @@ class Board{
         ctx.beginPath();
         ctx.fillStyle = "#0f2966";
         ctx.font = "48pt OCR A Std, monospace";
-        ctx.fillText(this.cellArr[x][y].value, x * ctx.canvas.height / (this.ySize), (y+1) * ctx.canvas.height/(this.ySize), );
+        ctx.fillText(this.cellArr[x][y].value, x * ctx.canvas.width / (this.xSize), (y+1) * ctx.canvas.height/(this.ySize), );
         ctx.stroke();
 
         this.cellArr[x][y].revealed = true;
@@ -84,7 +84,7 @@ class Board{
             ctx.beginPath();
             ctx.fillStyle = "purple";
             ctx.font = "100pt OCR A Std, monospace";
-            ctx.fillText("GAME WON!", x * ctx.canvas.height / (this.ySize), (y+1) * ctx.canvas.height/(this.ySize), );
+            ctx.fillText("GAME WON!", ctx.canvas.width / 8, ctx.canvas.height/(2));
             ctx.stroke();
         }
         if (this.cellArr[x][y].value == -1){
@@ -93,8 +93,8 @@ class Board{
     }
 
     displayCells(){
-        for(let i = 0; i < this.ySize; i++){
-            for(let j = 0; j < this.xSize; j++){
+        for(let i = 0; i < this.xSize; i++){
+            for(let j = 0; j < this.ySize; j++){
                 this.emptyCell(i, j);
             }
         }
@@ -104,7 +104,7 @@ class Board{
         let count = 0;
         for (let i = -1; i < 2; i++){
             for (let j = -1; j < 2; j++){
-                if (this.cellArr?.[x+i] !== undefined && this.cellArr[x+i]?.[y+j] !== undefined 
+                if (this.cellExists(x+i, y+j) 
                     && this.cellArr[x+i][y+j].value == -1){
                     count++;
                 }
@@ -152,8 +152,8 @@ class Board{
 
     assignNums(){
         this.safeCells = 1;
-        for(let i = 0; i < this.ySize; i++){
-            for(let j = 0; j < this.xSize; j++){
+        for(let i = 0; i < this.xSize; i++){
+            for(let j = 0; j < this.ySize; j++){
                 if (this.cellArr[i][j].value != -1){
                     this.cellArr[i][j].value = this.checkForBombs(i, j);
                 }
@@ -166,9 +166,9 @@ class Board{
 
     createCells(){
         this.started = false;
-        for(let i = 0; i < this.ySize; i++){
+        for(let i = 0; i < this.xSize; i++){
             this.cellArr[i] = new Array(this.xSize);
-            for(let j = 0; j < this.xSize; j++){
+            for(let j = 0; j < this.ySize; j++){
                 this.cellArr[i][j]= new Cell();
             }
         }
@@ -180,46 +180,49 @@ class Board{
         let tRow = []
         document.getElementById("table").addEventListener('contextmenu', event => event.preventDefault());
 
-        for(let j = 0; j < this.xSize; j++){
+        for(let j = 0; j < this.ySize; j++){
             //create rows for table
             tRow[j] = document.createElement('tr');
             this.table.append(tRow[j]);
 
-            for(let i = 0; i < this.ySize; i++){
+            for(let i = 0; i < this.xSize; i++){
                 //Create buttons for every row
                 tRow[j].appendChild(td = document.createElement('td'));
                 td.appendChild(bt = document.createElement('button'));
                 //Weird fix to make buttons fit
-                bt.style.width = (ctx.canvas.width - ySize*2)/this.ySize + "px";
-                console.log(bt.style.width);
-                bt.style.height = (ctx.canvas.width - xSize*2)/this.ySize + "px";
+                bt.style.width = (ctx.canvas.width)/this.xSize + "px";
+                bt.style.height = (ctx.canvas.height)/this.ySize + "px";
                 bt.style.border = "0px";
-                
-                //All Cell mouse events
-                bt.onmousedown = function(event) {
-                    if (board.cellArr[i][j].revealed){
-                        return;
-                    }
-                    if (event.button == 0 && !board.cellArr[i][j].flagged) {
-                        if (!board.started){
-                            board.started = true;
-                            board.startGame(i, j);
-                        }
-                        board.revealCell(i, j);
-                    }
-                    if (event.button == 2) {
-                        if (board.cellArr[i][j].flagged){
-                            board.cellArr[i][j].flagged = false;
-                            board.emptyCell(i, j);
-                        }else{
-                            board.cellArr[i][j].flagged = true;
-                            board.flagCell(i, j);
-                        }
-                    }
+                bt.setAttribute("class", "cellButton");
+                bt.onmousedown = function(event){
+                    board.mouseInput(i, j, event);
                 }
             }
         }
         document.getElementById('table').appendChild(this.table);
+    }
+
+    mouseInput(i, j, event){
+        if (this.cellArr[i][j].revealed){
+            return;
+        }
+        if (event.button == 0 && !this.cellArr[i][j].flagged) {
+            if (!this.started){
+                this.started = true;
+                this.startGame(i, j);
+            }
+            this.revealCell(i, j);
+        }
+        if (event.button == 2) {
+            if (this.cellArr[i][j].flagged){
+                this.cellArr[i][j].flagged = false;
+                this.emptyCell(i, j);
+            }else{
+                this.cellArr[i][j].flagged = true;
+                this.flagCell(i, j);
+            }
+        }
+        
     }
 
     deleteTable(){
