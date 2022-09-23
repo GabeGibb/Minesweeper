@@ -1,9 +1,18 @@
+let slide = document.getElementById("slide")
+slide.min = 5
+slide.max = 50
+slide.value = 10
+slide.step = 5
+
+
 var ctx = document.getElementById("canvas").getContext("2d");
-let xSize = 20;
-let ySize = 12;
+let xSize = Math.floor(slide.value * 1.4);
+let ySize = slide.value;
 let widthMult = xSize / ySize;
-ctx.canvas.height = window.innerHeight - 200;
+ctx.canvas.height = window.innerHeight - 100;
 ctx.canvas.width = ctx.canvas.height * widthMult;
+
+
 
 
 
@@ -12,7 +21,7 @@ class Cell{
         this.flagged = false;
         this.revealed = false;
         let rand = Math.random();
-        if (rand <= 0.20){
+        if (rand <= 0.15){
             this.value = -1;
         }
         else{
@@ -32,6 +41,7 @@ class Board{
         this.displayCells();
         this.createTable();
     }
+
 
     randomize(){
         this.emptyArray();
@@ -64,7 +74,7 @@ class Board{
     revealCell(x, y){
         ctx.beginPath();
         ctx.fillStyle = "#0f2966";
-        ctx.font = "48pt OCR A Std, monospace";
+        ctx.font = "16pt OCR A Std, monospace";
         ctx.fillText(this.cellArr[x][y].value, x * ctx.canvas.width / (this.xSize), (y+1) * ctx.canvas.height/(this.ySize), );
         ctx.stroke();
 
@@ -166,6 +176,7 @@ class Board{
 
     createCells(){
         this.started = false;
+
         for(let i = 0; i < this.xSize; i++){
             this.cellArr[i] = new Array(this.xSize);
             for(let j = 0; j < this.ySize; j++){
@@ -238,7 +249,18 @@ class Board{
     }
 }
 
-let board = new Board(xSize, ySize);
+var board = new Board(xSize, ySize);
+
+slide.oninput = function(){
+    let xSize = Math.floor(slide.value * 1.25);
+    let ySize = slide.value;
+    widthMult = xSize / ySize;
+    board.deleteTable();
+    board = new Board(xSize, ySize);
+}
+
+
+
 
 
 

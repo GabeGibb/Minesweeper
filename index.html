@@ -26,7 +26,7 @@
       border-spacing: 0px;
     }
     .cellButton{
-      /* background: transparent; */
+      background: transparent;
       display: inline-block;
       padding: 5px;
     }
@@ -34,16 +34,27 @@
       padding: 0px;
     }
     #rButton{
-      width: 200px;
-      height: 200px;
+      position: fixed;
+      left: 20px;
+      top: 100px;
+      width: 300px;
+      height: 300px;
+    }
+    #slide{
+      position: fixed;
+      left: 110px;
+      top: 430px;
     }
     
   </style>
 </head>
 
 <body>
-  <h1>Gabe's Sweeping</h1>
+  <font size="12">Gabe's Sweeping</font>
   <button id="rButton" type="button" onclick="board.randomize()"></button>
+  <input type="range" class="slider" id="slide">
+
+
 
   <div id="table">
 
