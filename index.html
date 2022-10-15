@@ -6,54 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Gabe's Sweepin</title>
-  <style>
-    canvas {
-      border: 1px solid black;
-      overflow: hidden;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1;
 
-    }
-    table{
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10;
-      border-spacing: 0px;
-    }
-    .cellButton{
-      background: transparent;
-      display: inline-block;
-      padding: 5px;
-    }
-    td{
-      padding: 0px;
-    }
-    #rButton{
-      position: fixed;
-      left: 20px;
-      top: 100px;
-      width: 300px;
-      height: 300px;
-    }
-    #slide{
-      position: fixed;
-      left: 110px;
-      top: 430px;
-    }
-    
-  </style>
+  <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
   <font size="12">Gabe's Sweeping</font>
   <button id="rButton" type="button" onclick="board.randomize()"></button>
   <input type="range" class="slider" id="slide">
-
 
 
   <div id="table">

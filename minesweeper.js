@@ -1,6 +1,6 @@
-let slide = document.getElementById("slide")
+var slide = document.getElementById("slide")
 slide.min = 5
-slide.max = 50
+slide.max = 20
 slide.value = 10
 slide.step = 5
 
@@ -11,9 +11,6 @@ let ySize = slide.value;
 let widthMult = xSize / ySize;
 ctx.canvas.height = window.innerHeight - 100;
 ctx.canvas.width = ctx.canvas.height * widthMult;
-
-
-
 
 
 class Cell{
@@ -42,7 +39,7 @@ class Board{
         this.createTable();
     }
 
-
+    
     randomize(){
         this.emptyArray();
         this.createCells();
@@ -74,8 +71,8 @@ class Board{
     revealCell(x, y){
         ctx.beginPath();
         ctx.fillStyle = "#0f2966";
-        ctx.font = "16pt OCR A Std, monospace";
-        ctx.fillText(this.cellArr[x][y].value, x * ctx.canvas.width / (this.xSize), (y+1) * ctx.canvas.height/(this.ySize), );
+        ctx.font = 700 / slide.value + "pt OCR A Std, monospace";
+        ctx.fillText(this.cellArr[x][y].value, (x + 0.2) * ctx.canvas.width / (this.xSize), (y+0.9) * ctx.canvas.height/(this.ySize));
         ctx.stroke();
 
         this.cellArr[x][y].revealed = true;
