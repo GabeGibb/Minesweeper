@@ -31,7 +31,7 @@ canvas {
     width: 300px;
     height: 300px;
   }
-  #slide{
+  #boardSlide{
     position: fixed;
     left: 110px;
     top: 430px;

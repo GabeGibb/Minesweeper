@@ -1,7 +1,7 @@
-var slide = document.getElementById("slide")
+var slide = document.getElementById("boardSlide")
 slide.min = 5
 slide.max = 20
-slide.value = 10
+slide.value = 5
 slide.step = 5
 
 
@@ -13,12 +13,15 @@ ctx.canvas.height = window.innerHeight - 100;
 ctx.canvas.width = ctx.canvas.height * widthMult;
 
 
+
+const timer = ms => new Promise(res => setTimeout(res, ms))
+
 class Cell{
     constructor(){
         this.flagged = false;
         this.revealed = false;
         let rand = Math.random();
-        if (rand <= 0.15){
+        if (rand <= 0.2){
             this.value = -1;
         }
         else{
@@ -32,6 +35,8 @@ class Board{
         this.xSize = xSize;
         this.ySize = ySize;
         this.cellArr = new Array(xSize);
+        this.gameStarted = false;
+        this.canPlay = true;
 
         this.createCells();
         this.assignNums();
@@ -41,6 +46,8 @@ class Board{
 
     
     randomize(){
+        this.gameStarted = false;
+        this.canPlay = true;
         this.emptyArray();
         this.createCells();
         this.assignNums();
@@ -69,6 +76,11 @@ class Board{
     }
 
     revealCell(x, y){
+        if (this.cellArr[x][y].value == -1){
+            this.gameOverScreen();
+            this.canPlay = false;
+            return;
+        }
         ctx.beginPath();
         ctx.fillStyle = "#0f2966";
         ctx.font = 700 / slide.value + "pt OCR A Std, monospace";
@@ -88,16 +100,58 @@ class Board{
         }
 
         if (this.safeCells == 0){
-            ctx.beginPath();
-            ctx.fillStyle = "purple";
-            ctx.font = "100pt OCR A Std, monospace";
-            ctx.fillText("GAME WON!", ctx.canvas.width / 8, ctx.canvas.height/(2));
-            ctx.stroke();
+            this.gameWonScreen();
+            this.canPlay = false;
         }
-        if (this.cellArr[x][y].value == -1){
-            this.randomize();
-        }
+        
     }
+
+    async gameWonScreen(){
+     
+        for(let i = 0; i < board.xSize; i++){
+            for(let j = 0; j < board.ySize; j++){
+                
+                ctx.beginPath();
+                ctx.fillStyle = `rgb(
+                    ${Math.floor(Math.floor(Math.random() * 256))},
+                    ${Math.floor(Math.floor(Math.random() * 256))},
+                    ${Math.floor(Math.floor(Math.random() * 256))})`;
+                ctx.fillRect(i * ctx.canvas.width / (board.xSize), j*ctx.canvas.height/(board.ySize), 
+                ctx.canvas.width / (board.xSize), ctx.canvas.height / (board.ySize));
+                ctx.stroke(); 
+                  
+                await timer(10);
+                if (!board.gameStarted){
+                    board.displayCells();
+                    return;
+                }
+            }
+        }
+       
+        requestAnimationFrame(board.gameWonScreen);
+        
+    }
+
+    async gameOverScreen(){
+        
+        for(let i = 0; i < this.xSize; i++){
+            
+            for(let j = 0; j < this.ySize; j++){
+               
+                if (this.cellArr[i][j].value == -1){
+                    ctx.beginPath();
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(i * ctx.canvas.width / (this.xSize), j*ctx.canvas.height/(this.ySize), 
+                        ctx.canvas.width / (this.xSize), ctx.canvas.height / (this.ySize));
+                    ctx.stroke(); 
+                    console.log("hey");
+                    await timer(200);
+                }
+            }
+        }
+
+    }
+
 
     displayCells(){
         for(let i = 0; i < this.xSize; i++){
@@ -137,6 +191,7 @@ class Board{
     }
     
     startGame(x, y){
+        this.gameStarted = true;
         this.clearStartBombs(x, y);
         this.assignNums();
         this.revealCell(x, y);
@@ -211,6 +266,9 @@ class Board{
     }
 
     mouseInput(i, j, event){
+        if(!this.canPlay){
+            return;
+        }
         if (this.cellArr[i][j].revealed){
             return;
         }
@@ -222,6 +280,9 @@ class Board{
             this.revealCell(i, j);
         }
         if (event.button == 2) {
+            if (!this.gameStarted){
+                return false;
+            }
             if (this.cellArr[i][j].flagged){
                 this.cellArr[i][j].flagged = false;
                 this.emptyCell(i, j);
