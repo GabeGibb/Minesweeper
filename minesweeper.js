@@ -21,7 +21,7 @@ class Cell{
         this.flagged = false;
         this.revealed = false;
         let rand = Math.random();
-        if (rand <= 0.2){
+        if (rand <= 0.17){
             this.value = -1;
         }
         else{
@@ -145,7 +145,7 @@ class Board{
                         ctx.canvas.width / (this.xSize), ctx.canvas.height / (this.ySize));
                     ctx.stroke(); 
                     console.log("hey");
-                    await timer(200);
+                    // await timer(200);
                 }
             }
         }
@@ -227,7 +227,7 @@ class Board{
     }
 
     createCells(){
-        this.started = false;
+        this.gameStarted = false;
 
         for(let i = 0; i < this.xSize; i++){
             this.cellArr[i] = new Array(this.xSize);
@@ -273,8 +273,8 @@ class Board{
             return;
         }
         if (event.button == 0 && !this.cellArr[i][j].flagged) {
-            if (!this.started){
-                this.started = true;
+            if (!this.gameStarted){
+                this.gameStarted = true;
                 this.startGame(i, j);
             }
             this.revealCell(i, j);
